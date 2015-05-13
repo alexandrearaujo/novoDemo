@@ -30,15 +30,18 @@ spring:
         min-idle: 1
         max-idle: 3
         max-wait: 15000
-#    data:
-#        jpa:
-#            repositories: 
-#                enabled: true
+    data:
+        jpa:
+            repositories: 
+                enabled: true
     jpa:
         database: oracle
         database_platform: org.hibernate.dialect.Oracle10gDialect
         show-sql: true
         open-in-view: true
+        properties:
+            hibernate:
+                archive.autodetection: class
     mail:
         host: localhost
         port: 25
