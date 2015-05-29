@@ -20,8 +20,8 @@ spring:
         name: demo
     datasource:
         #jndi-name: java:jboss/datasources/bootdemo
-        driverClassName: oracle.jdbc.OracleDriver
-        url: jdbc:oracle:thin:@192.168.254.17:1521:sml
+        driverClassName: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/estratificacao
         username: dbamvfor
         password: dbamvfor
         initialize: false
@@ -36,9 +36,11 @@ spring:
                 enabled: true
     jpa:
         database: oracle
-        database_platform: org.hibernate.dialect.Oracle10gDialect
+        database_platform: org.hibernate.dialect.PostgreSQLDialect
         show-sql: true
         open-in-view: true
+        hibernate:
+            ddl-auto: update
         properties:
             hibernate:
                 archive.autodetection: class
