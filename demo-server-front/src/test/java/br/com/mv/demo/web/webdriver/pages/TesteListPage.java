@@ -10,7 +10,6 @@ import br.com.mv.modulo.webdriver.pages.AbstractPage;
 
 public class TesteListPage extends AbstractPage {
 	
-	@FindBy(css = "input[type=text]")
 	@CacheLookup
 	private WebElement descTeste;
 	
@@ -30,8 +29,8 @@ public class TesteListPage extends AbstractPage {
 	private WebElement btnExclusaoSim;
 	
 	
-	public TesteListPage(WebDriver driver) {
-		super(driver);
+	public TesteListPage(WebDriver driver, String context, int port) {
+		super(driver, context, port);
 		get("/teste/list");
 		PageFactory.initElements(driver, this);
 	}

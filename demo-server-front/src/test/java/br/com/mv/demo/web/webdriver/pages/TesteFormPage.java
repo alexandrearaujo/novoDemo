@@ -3,14 +3,12 @@ package br.com.mv.demo.web.webdriver.pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.CacheLookup;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import br.com.mv.modulo.webdriver.pages.AbstractPage;
 
 public class TesteFormPage extends AbstractPage {
 
-	@FindBy(css = "input[type=text]")
 	@CacheLookup
 	private WebElement descTeste;
 	
@@ -18,9 +16,9 @@ public class TesteFormPage extends AbstractPage {
     private WebElement btnSalvar;
 
 	
-	public TesteFormPage(WebDriver driver) {
-		super(driver);
-		get("teste/new");
+	public TesteFormPage(WebDriver driver, String context, int port) {
+		super(driver, context, port);
+		get("/teste/new");
 		PageFactory.initElements(driver, this);
 	}
 	
