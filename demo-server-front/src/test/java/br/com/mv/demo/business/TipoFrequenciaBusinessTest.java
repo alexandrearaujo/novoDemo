@@ -11,10 +11,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.mv.demo.DemoTestsConfig;
 import br.com.mv.demo.model.TipoFrequencia;
-import br.com.mv.modulo.TestsConfig;
 
-public class TipoFrequenciaBusinessTest extends TestsConfig {
+public class TipoFrequenciaBusinessTest extends DemoTestsConfig {
 	
 	@Autowired
 	private TipoFrequenciaBusiness tipoFrequenciaBusiness;

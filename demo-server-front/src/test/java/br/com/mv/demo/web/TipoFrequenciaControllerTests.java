@@ -25,12 +25,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
+import br.com.mv.demo.DemoTestsConfig;
 import br.com.mv.demo.model.TipoFrequencia;
-import br.com.mv.modulo.TestsConfig;
 import br.com.mv.modulo.model.type.EnumTipoMensagem;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TipoFrequenciaControllerTests extends TestsConfig {
+public class TipoFrequenciaControllerTests extends DemoTestsConfig {
 	
 	private static TipoFrequencia tipoFrequencia;
 	

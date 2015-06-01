@@ -30,8 +30,8 @@ public class TesteListPage extends AbstractPage {
 	private WebElement btnExclusaoSim;
 	
 	
-	public TesteListPage(WebDriver driver) {
-		super(driver);
+	public TesteListPage(WebDriver driver, String context, int port) {
+		super(driver, context, port);
 		get("/teste/list");
 		PageFactory.initElements(driver, this);
 	}

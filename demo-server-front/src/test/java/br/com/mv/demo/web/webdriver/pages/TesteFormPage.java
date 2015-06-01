@@ -18,8 +18,8 @@ public class TesteFormPage extends AbstractPage {
     private WebElement btnSalvar;
 
 	
-	public TesteFormPage(WebDriver driver) {
-		super(driver);
+	public TesteFormPage(WebDriver driver, String context, int port) {
+		super(driver, context, port);
 		get("teste/new");
 		PageFactory.initElements(driver, this);
 	}
