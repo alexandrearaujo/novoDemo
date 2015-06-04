@@ -4,11 +4,11 @@ import java.text.ParseException;
 
 import org.junit.Test;
 
+import br.com.mv.demo.DemoWebDriverTestsConfig;
 import br.com.mv.demo.web.webdriver.pages.TesteFormPage;
 import br.com.mv.demo.web.webdriver.pages.TesteListPage;
-import br.com.mv.modulo.WebDriverTestsConfig;
 
-public class WebDriverCrudTesteIT extends WebDriverTestsConfig {
+public class WebDriverCrudTesteIT extends DemoWebDriverTestsConfig {
 	
 	private TesteListPage testeList;
 	private TesteFormPage testeForm;
@@ -18,8 +18,8 @@ public class WebDriverCrudTesteIT extends WebDriverTestsConfig {
 		String expectedTeste = "WEBDRIVER TESTE";
 		String expectedEditedTeste = "WEBDRIVER TESTE ALTERADO";
 		
-		testeList = new TesteListPage(webDriver);
-		testeForm = new TesteFormPage(webDriver);
+		testeList = new TesteListPage(webDriver, contextPath, port);
+		testeForm = new TesteFormPage(webDriver, contextPath, port);
 		
 		testeForm.createTeste(testeList, expectedTeste);
 		testeList.listTeste(expectedTeste);
