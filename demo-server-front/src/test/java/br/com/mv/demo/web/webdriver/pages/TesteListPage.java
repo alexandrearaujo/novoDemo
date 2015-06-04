@@ -10,7 +10,6 @@ import br.com.mv.modulo.webdriver.pages.AbstractPage;
 
 public class TesteListPage extends AbstractPage {
 	
-	@FindBy(css = "input[type=text]")
 	@CacheLookup
 	private WebElement descTeste;
 	

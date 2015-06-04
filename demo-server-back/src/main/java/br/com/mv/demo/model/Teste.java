@@ -21,9 +21,7 @@ import lombok.Setter;
 @Table(name="TESTE")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class Teste implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 7929915464761772169L;
 	
 

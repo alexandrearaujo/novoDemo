@@ -21,8 +21,8 @@ public class App {
 		srbms.setDefaultEncoding("UTF-8");
 		srbms.setBasenames("classpath:org/springframework/security/messages",
 				"classpath:org/hibernate/validator/ValidationMessages",
-				"classpath:/messages/messages",
-				"classpath:/messagesApp/messages");
+				"classpath:/messagesApp/messages",
+				"classpath:/messages/messages");
 		return srbms;
 	}
 }
