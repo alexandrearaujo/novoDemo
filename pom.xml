@@ -53,6 +53,12 @@
 			<name>Spring Releases</name>
 			<url>https://repo.spring.io/release</url>
 		</repository>
+		
+		<repository>
+            <id>spring-snapshots</id>
+            <url>http://repo.spring.io/libs-snapshot</url>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
 	</repositories>
 	
 	<pluginRepositories>
@@ -60,6 +66,12 @@
 			<id>spring-release</id>
 			<name>Spring Releases</name>
 			<url>https://repo.spring.io/release</url>
+		</pluginRepository>
+		
+		<pluginRepository>
+			<id>spring-snapshots</id>
+            <url>http://repo.spring.io/libs-snapshot</url>
+            <snapshots><enabled>true</enabled></snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 </project>
