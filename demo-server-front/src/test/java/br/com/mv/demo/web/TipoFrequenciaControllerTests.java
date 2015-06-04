@@ -151,7 +151,6 @@ public class TipoFrequenciaControllerTests extends DemoTestsConfig {
 	
 	private void createTipoFrequenciaTest() {
 		tipoFrequencia = new TipoFrequencia();
-		tipoFrequencia.setId(1L);
 		tipoFrequencia.setDescricaoFrequencia("TESTE AUTOMATIZADO");
 		tipoFrequencia.setImpressaoReceita("TESTE IMPRESSAO RECEITA");
 		tipoFrequencia.setHorarioInicial(new Date());

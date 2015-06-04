@@ -49,23 +49,19 @@
 	
 	<repositories>
 		<repository>
-			<id>spring-release</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/release</url>
+			<id>MVProxy</id>
+			<name>MV Proxy Repository</name>
+			<url>http://echo.mvfor.local/nexus/content/groups/public</url>
+			<layout>default</layout>
 		</repository>
-		
-		<repository>
-            <id>spring-snapshots</id>
-            <url>http://repo.spring.io/libs-snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
 	</repositories>
 	
 	<pluginRepositories>
 		<pluginRepository>
-			<id>spring-release</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/release</url>
+			<id>MVProxy</id>
+			<name>MV Proxy Repository</name>
+			<url>http://echo.mvfor.local/nexus/content/groups/public</url>
+			<layout>default</layout>
 		</pluginRepository>
 	</pluginRepositories>
 </project>
