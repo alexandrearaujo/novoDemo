@@ -8,7 +8,6 @@
 <body>
 
 <div id="left" th:fragment="menu-left">
-    <!-- #menu -->
     <ul id="menu">
 		<li>
 		  	<a href="javascript:;">
@@ -24,31 +23,17 @@
 				  </a> 
 				</li>
 			</ul>
-		</li>
-		
-		<li>
-			<a href="javascript:;">
-				<i class="glyphicon glyphicon-paste"></i>
-				<span class="link-title" th:text="#{movimentacao}"></span>
-				<span class="fa arrow"></span> 
-			</a> 
 			
 			<ul>
-				<li data-controller="solicitacaoMedicamento">
-				  <a href="#solicitacaoMedicamento" th:href="@{/solicitacaoMedicamento/list}">
-				    <i class="fa fa-desktop"></i> <span th:text="#{solicitacaoMedicamento}"></span>
-				  </a> 
-				</li>
-				
-				<li data-controller="dispensacaoMedicamento">
-				  <a href="#dispensacaoMedicamento" th:href="@{/dispensacaoMedicamento/list}">
-				    <i class="fa fa-desktop"></i> <span th:text="#{dispensacaoMedicamento}"></span>
+				<li data-controller="teste">
+				  <a href="#listTeste" th:href="@{/teste/list}">
+				    <i class="fa fa-desktop"></i> <span th:text="#{teste}"></span>
 				  </a> 
 				</li>
 			</ul>
 		</li>
 	</ul>
-</div><!-- /#menu -->
+</div>
 
 </body>
 </html>
