@@ -13,28 +13,19 @@ import br.com.mv.modulo.business.GenericCrudBusiness;
 
 @Service
 @Transactional(readOnly=true)
-public class NovoTesteBusiness extends GenericCrudBusiness<NovoTeste> {
+public class NovoTesteBusiness extends GenericCrudBusiness<NovoTeste, NovoTesteRepository> {
 	
-	private final NovoTesteRepository novoTesteRepository;
-
 	@Autowired
 	public NovoTesteBusiness(NovoTesteRepository novoTesteRepository) {
 		super(novoTesteRepository);
-		this.novoTesteRepository = novoTesteRepository;
 	}
 	
 	@Override
-	public Page<NovoTeste> listModel(NovoTeste t, Pageable pageable) {
-		String descricaoLiked = null;
-		
-		if (StringUtils.isNotBlank(t.getDescricao())) {
-			descricaoLiked = "%" + t.getDescricao() + "%";
-		}
-		
-		if (StringUtils.isNotBlank(t.getDescricao())) {
-			return novoTesteRepository.findByDescricaoLikeIgnoreCase(descricaoLiked, pageable);
+	public Page<NovoTeste> listModel(NovoTeste novoTeste, Pageable pageable) {
+		if (StringUtils.isNotBlank(novoTeste.getDescricao())) {
+			return repository.findByDescricaoContainingIgnoreCase(novoTeste.getDescricao(), pageable);
 		} else {
-			return novoTesteRepository.findAll(pageable);
+			return repository.findAll(pageable);
 		}
 	}
 

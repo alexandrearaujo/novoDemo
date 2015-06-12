@@ -13,14 +13,11 @@ import br.com.mv.modulo.business.GenericCrudBusiness;
 
 @Service
 @Transactional(readOnly=true)
-public class TesteBusiness extends GenericCrudBusiness<Teste> {
-	
-	private final TesteRepository testeRepository;
+public class TesteBusiness extends GenericCrudBusiness<Teste, TesteRepository> {
 	
 	@Autowired
 	public TesteBusiness(TesteRepository testeRepository) {
 		super(testeRepository);
-		this.testeRepository = testeRepository;
 	}
 
 	@Override
@@ -32,9 +29,9 @@ public class TesteBusiness extends GenericCrudBusiness<Teste> {
 		}
 		
 		if (StringUtils.isNotBlank(t.getDescricao())) {
-			return testeRepository.findByDescricaoLikeIgnoreCase(descricaoLiked, pageable);
+			return repository.findByDescricaoLikeIgnoreCase(descricaoLiked, pageable);
 		} else {
-			return testeRepository.findAll(pageable);
+			return repository.findAll(pageable);
 		}
 	}
 }

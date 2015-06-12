@@ -13,10 +13,10 @@ import br.com.mv.modulo.web.GenericCrudController;
 @Controller
 @RequestMapping("/novoTeste")
 @SessionAttributes(types = NovoTeste.class)
-public class DemoController extends GenericCrudController<NovoTeste> {
+public class NovoTesteController extends GenericCrudController<NovoTeste> {
 
 	@Autowired
-	public DemoController(GenericMessages genericMessages, NovoTesteBusiness novoTesteBusiness) {
+	public NovoTesteController(GenericMessages genericMessages, NovoTesteBusiness novoTesteBusiness) {
 		super(genericMessages, novoTesteBusiness);
 	}
 

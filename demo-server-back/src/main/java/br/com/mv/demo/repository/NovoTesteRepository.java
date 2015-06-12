@@ -10,7 +10,7 @@ import br.com.mv.modulo.repository.GenericCrudRepository;
 @Repository
 public interface NovoTesteRepository extends GenericCrudRepository<NovoTeste> {
 	
-	public Page<NovoTeste> findByDescricaoLikeIgnoreCase(String descricao, Pageable pageable);
+	public Page<NovoTeste> findByDescricaoContainingIgnoreCase(String descricao, Pageable pageable);
 	public Page<NovoTeste> findAll(Pageable pageable);
 
 }
