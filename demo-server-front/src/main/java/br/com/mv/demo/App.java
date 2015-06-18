@@ -15,6 +15,7 @@ public class App {
         SpringApplication.run(App.class, args);
     }
     
+    
     @Bean
 	public MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource srbms = new ReloadableResourceBundleMessageSource();
