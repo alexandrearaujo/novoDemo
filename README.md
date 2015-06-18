@@ -1,1 +1,1 @@
-# novoDemo
+# Demonstration Application.
