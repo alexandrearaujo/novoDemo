@@ -39,36 +39,36 @@
 					</execution>
 			        
 			        <execution>
-			            <id>gulp less</id>
+			            <id>gulp optimize-and-copy-less</id>
 			            <goals>
 			                <goal>gulp</goal>
 			            </goals>
 						<configuration>
 							<srcdir>${basedir}\src\less</srcdir>
-					        <arguments>less</arguments>
+					        <arguments>optimize-and-copy-less</arguments>
 					    </configuration>
 			        </execution>
 			        
 			        <execution>
-			            <id>gulp copy-app-js</id>
+			            <id>gulp optimize-and-copy-app-js</id>
 			            <goals>
 			                <goal>gulp</goal>
 			            </goals>
 						<configuration>
 							<srcdir>${basedir}\src\app</srcdir>
 							<outputdir>${basedir}\dist</outputdir>
-					        <arguments>copy-app-js</arguments>
+					        <arguments>optimize-and-copy-app-js</arguments>
 					    </configuration>
 			        </execution>
 			        
 			        <execution>
-			            <id>gulp copy-images</id>
+			            <id>gulp optimize-and-copy-images</id>
 			            <goals>
 			                <goal>gulp</goal>
 			            </goals>
 						<configuration>
 							<srcdir>${basedir}\src\img</srcdir>
-					        <arguments>copy-images</arguments>
+					        <arguments>optimize-and-copy-images</arguments>
 					    </configuration>
 			        </execution>
 				</executions>
