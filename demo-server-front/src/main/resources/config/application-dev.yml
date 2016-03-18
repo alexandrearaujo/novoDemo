@@ -1,6 +1,6 @@
 debug: true
 liquibase:
-    enabled: true
+    enabled: false
     change-log: classpath:/db/changelog/db.changelog-master.xml
     default-schema: DBAMVFOR
     user: DBAMVFOR
