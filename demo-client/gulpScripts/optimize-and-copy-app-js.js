@@ -8,8 +8,8 @@ var uglify = require('gulp-uglify');
 gulp.task('optimize-and-copy-app-js', function() {
 	return gulp.src(paths.src.app)
 			   .pipe(changed(paths.dest.app))
-			   .pipe(sourcemaps.init())
+			   .pipe(sourcemaps.init({loadMaps: true}))
 			   .pipe(uglify().on('error', errorHandler.onError))
-			   .pipe(sourcemaps.write("./"))
+			   .pipe(sourcemaps.write())
 			   .pipe(gulp.dest(paths.dest.app));
 });

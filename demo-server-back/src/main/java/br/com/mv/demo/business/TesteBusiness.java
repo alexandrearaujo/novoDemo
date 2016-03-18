@@ -1,37 +1,213 @@
 package br.com.mv.demo.business;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.CacheMode;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.mv.demo.model.DetalheTeste;
 import br.com.mv.demo.model.Teste;
+import br.com.mv.demo.model.type.EnumTipoTeste;
 import br.com.mv.demo.repository.TesteRepository;
-import br.com.mv.modulo.business.GenericCrudBusiness;
 
 @Service
-@Transactional(readOnly=true)
-public class TesteBusiness extends GenericCrudBusiness<Teste, TesteRepository> {
+@Transactional(readOnly = true)
+public class TesteBusiness {
 	
 	@Autowired
-	public TesteBusiness(TesteRepository testeRepository) {
-		super(testeRepository);
+	private TesteRepository testeRepository;
+	
+	@Autowired
+	private EntityManager entityManager;
+	
+	@Autowired
+	private EntityManagerFactory entityManagerFactory;
+	
+	@Transactional
+	public Teste salvar(Teste teste) {
+		return testeRepository.save(teste);
 	}
 
-	@Override
-	public Page<Teste> listModel(Teste t, Pageable pageable) {
-		String descricaoLiked = null;
+	@Transactional
+	public void deletarTodos() {
+		testeRepository.deleteAll();
+	}
+	
+	public Teste getTesteByNaturalId() {
+		Session session = entityManager.unwrap(Session.class);
+		session.enableFetchProfile("teste.detalhesProfile");
+		return session.bySimpleNaturalId(Teste.class).load("11111111111");
+	}
+	
+	public DetalheTeste getDetalheTesteWithoutData(Long id) {
+		return entityManager.getReference(DetalheTeste.class, id);
+	}
+	
+	public Teste findById(Long id) {
+		return testeRepository.findOne(id);
+	}
+	
+	public void refresh(Teste teste) {
+		entityManager.refresh(teste);
+	}
+
+	public Teste joinFetch(Long id) {
+		return testeRepository.joinFetch(id);
+	}
+
+	public Teste joinFetchCriteria(Long id) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Teste> query = builder.createQuery(Teste.class);
+		Root<Teste> root = query.from(Teste.class);
+		root.fetch("detalhes", JoinType.LEFT);
+		root.fetch("mappedTestes", JoinType.LEFT);
+		root.fetch("sortedTestes", JoinType.LEFT);
+		query.select(root).where(
+		    builder.and(
+		        builder.equal(root.get("id"), id)
+		    )
+		);
+		return entityManager.createQuery(query).getSingleResult();
 		
-		if (StringUtils.isNotBlank(t.getDescricao())) {
-			descricaoLiked = "%" + t.getDescricao() + "%";
+	}
+	
+	public Teste fetchEntityGraph(Long id) {
+		return entityManager.find(Teste.class,
+				id,
+				Collections.singletonMap("javax.persistence.fetchgraph",
+											entityManager.getEntityGraph("teste.detalhes"))
+		);
+	}
+	
+	public Teste fetchEntityGraphWithQuery(Long id) {
+		EntityGraph<Teste> entityGraph = (EntityGraph<Teste>) entityManager.createEntityGraph("teste.detalhes");
+		
+		Query query = entityManager.createQuery("select t from Teste t where t.id = :id and type(t) = :type");
+		query.setParameter("id", id);
+		query.setParameter("type", Teste.class);
+		query.setHint("javax.persistence.fetchgraph", entityGraph);
+		
+		return (Teste) query.getSingleResult();
+	}
+	
+	public Teste fetchEntityGraphWithTypedQuery(Long id) {
+		EntityGraph<Teste> entityGraph = (EntityGraph<Teste>) entityManager.createEntityGraph("teste.detalhes");
+		
+		TypedQuery<Teste> query = entityManager.createQuery("select t from Teste t where t.id = :id", Teste.class);
+		query.setParameter("id", id);
+		query.setHint("javax.persistence.fetchgraph", entityGraph);
+		
+		return query.getSingleResult();
+	}
+	
+	public Teste loadEntityGraphWithTypedQuery(Long id) {
+		TypedQuery<Teste> query = entityManager.createQuery("select t from Teste t where t.id = :id", Teste.class);
+		query.setParameter("id", id);
+		query.setHint("javax.persistence.loadgraph", entityManager.createEntityGraph("teste.detalhes"));
+		return query.getSingleResult();
+	}
+	
+	public List<String> loadCoalesce(Long id) {
+		TypedQuery<String> query = entityManager.createQuery("select coalesce(t.descricao, '<sem descricao>' ) from Teste t where t.id = :id", String.class);
+		query.setParameter("id", id);
+		return query.getResultList();
+	}
+	
+	public void insertTestes() {
+		EntityTransaction txn = null;
+		EntityManager entityManager = null;
+		try {
+			entityManager = entityManagerFactory.createEntityManager();
+			txn = entityManager.getTransaction();
+		    txn.begin();
+
+		    int batchSize = 50;
+
+		    for ( int i = 1; i < 1000; ++i ) {
+		        Teste teste = new Teste();
+		        teste.setCodigo(i);
+		        teste.setCpf(String.valueOf(i));
+		        teste.setDescricao("TESTE " + i);
+		        teste.setSituacaoTeste(EnumTipoTeste.LIBERADO);
+		        
+		        entityManager.persist(teste);
+
+		        if ( i % batchSize == 0 ) {
+		            //flush a batch of inserts and release memory
+		            entityManager.flush();
+		            entityManager.clear();
+		        }
+		    }
+
+		    txn.commit();
+		} catch (RuntimeException e) {
+		    if ( txn != null && txn.isActive()) txn.rollback();
+		        throw e;
+		} finally {
+		    if (entityManager != null) {
+		        entityManager.close();
+		    }
 		}
-		
-		if (StringUtils.isNotBlank(t.getDescricao())) {
-			return repository.findByDescricaoLikeIgnoreCase(descricaoLiked, pageable);
-		} else {
-			return repository.findAll(pageable);
+	}
+	
+	public void updateTestes() {
+		EntityTransaction txn = null;
+		EntityManager entityManager = null;
+		ScrollableResults scrollableResults = null;
+		try {
+			entityManager = entityManagerFactory.createEntityManager();
+			txn = entityManager.getTransaction();
+		    txn.begin();
+
+		    int batchSize = 50;
+		    
+		    Session session = entityManager.unwrap(Session.class);
+
+		    scrollableResults = session
+		        .createQuery("select t from Teste t")
+		        .setCacheMode(CacheMode.IGNORE)
+		        .scroll(ScrollMode.FORWARD_ONLY);
+
+		    int count = 0;
+		    while (scrollableResults.next()) {
+		        Teste teste = (Teste) scrollableResults.get( 0 );
+		        
+		        teste.getNome().setApelido("ROBERTIM " + teste.getCodigo());
+		        
+		        if ( ++count % batchSize == 0 ) {
+		            //flush a batch of updates and release memory:
+		            entityManager.flush();
+		            entityManager.clear();
+		        }
+		    }
+
+		    txn.commit();
+		} catch (RuntimeException e) {
+		    if ( txn != null && txn.isActive()) {
+		    	txn.rollback();
+		    }
+	        throw e;
+		} finally {
+		    if (entityManager != null) {
+		        entityManager.close();
+		    }
 		}
 	}
 }

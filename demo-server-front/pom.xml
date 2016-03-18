@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>br.com.mv</groupId>
 		<artifactId>demo</artifactId>
-		<version>${project.version}</version>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -31,32 +31,89 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle.drivers</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        
+         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 	</dependencies>
 	
 	<build>
+	   <finalName>${project.parent.artifactId}</finalName>
+	   
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>src${file.separator}main${file.separator}resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
 		
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<dependencies>
-			        <dependency>
-			            <groupId>org.springframework</groupId>
-			            <artifactId>springloaded</artifactId>
-			            <version>LATEST</version>
-			        </dependency>
-			    </dependencies>
-			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludeDevtools>true</excludeDevtools>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.oracle.drivers</groupId>
+                            <artifactId>ojdbc7</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-tomcat</artifactId>
+                        </exclude>
+                    </excludes>
+                    <excludeGroupIds>org.apache.tomcat.embed</excludeGroupIds>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <configuration>
+                    <quiet>false</quiet>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>replace profile to prod</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>cadastros-basicos-server-front${file.separator}target${file.separator}classes${file.separator}config${file.separator}application.yml</file>
+                            <token>dev</token>
+                            <value>prod</value>
+                            <regex>false</regex>
+                            <quiet>false</quiet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
 	</build>
 </project>

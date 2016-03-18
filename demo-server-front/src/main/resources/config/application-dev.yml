@@ -1,0 +1,40 @@
+debug: true
+liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+    default-schema: DBAMVFOR
+    user: DBAMVFOR
+    password: DBAMVFOR
+    url: jdbc:oracle:thin:@192.168.254.17:1521:dev3
+server:
+    context-path: /demo
+    port: 8080
+    #ssl:
+    #    key-store: keystore.jks
+    #    key-alias: tomcat
+    #    key-store-password: tomcatmvfor
+    #tomcat:
+    #    compression: 4096
+    #    compressableMimeTypes: application/json,application/xml
+spring:  
+    profiles: dev
+    datasource:
+        url: jdbc:oracle:thin:@192.168.254.17:1521:dev3
+        username: dbamvfor
+        password: dbamvfor 
+        initialize: false
+        initial-size: 1
+        max-total: 50
+        min-idle: 0
+        max-idle: 8
+        max-wait-millis: 15000
+    mail:
+        host: localhost
+        port: 25
+#        protocol: smtp
+#        smtp:
+#            auth: false
+#            starttls.enable: false
+#        from: me@localhost
+#        username:
+#        password:

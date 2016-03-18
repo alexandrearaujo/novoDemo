@@ -6,8 +6,8 @@ module.exports = {
     },
     dest: {
         root: './dist/',
-        app: this.root + 'app',
-        css: this.root + 'css',
-        images: this.root + 'img'
+        app: './dist/static/app',
+        css: './dist/static/css',
+        images: './dist/static/img'
     }
 };
