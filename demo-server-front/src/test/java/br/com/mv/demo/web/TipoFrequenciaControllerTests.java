@@ -93,7 +93,7 @@ public class TipoFrequenciaControllerTests extends DemoTestsConfig {
 		assertThat(tipoFrequencia.getDetalhes(), hasSize(5));
 	}
 	
-	@Test
+//	@Test
 	public void test06Save() throws Exception  {
 		mockMvc.perform(post("/tipoFrequencia/save")
 			   .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -105,7 +105,7 @@ public class TipoFrequenciaControllerTests extends DemoTestsConfig {
 			   .andExpect(redirectedUrl("/tipoFrequencia/returnToList"));
 	}
 	
-	@Test
+//	@Test
 	public void test07ReturnTipoFrequenciaSaved() throws Exception  {
 		MvcResult result = mockMvc.perform(post("/tipoFrequencia/list")
 							      .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -123,7 +123,7 @@ public class TipoFrequenciaControllerTests extends DemoTestsConfig {
 		tipoFrequencia = page.getContent().get(0);
 	}
 	
-	@Test
+//	@Test
 	public void test08ReturnToList() throws Exception  {
 		MvcResult result = mockMvc.perform(get("/tipoFrequencia/returnToList")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -138,7 +138,7 @@ public class TipoFrequenciaControllerTests extends DemoTestsConfig {
 		assertThat(page.getContent().size(), greaterThanOrEqualTo(1));
 	}
 	
-	@Test
+//	@Test
 	public void test09remove() throws Exception  {
 		mockMvc.perform(get("/tipoFrequencia/delete")
 			   .contentType(MediaType.APPLICATION_FORM_URLENCODED)

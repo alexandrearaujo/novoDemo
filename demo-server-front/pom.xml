@@ -105,7 +105,7 @@
                             <goal>replace</goal>
                         </goals>
                         <configuration>
-                            <file>cadastros-basicos-server-front${file.separator}target${file.separator}classes${file.separator}config${file.separator}application.yml</file>
+                            <file>demo-server-front${file.separator}target${file.separator}classes${file.separator}config${file.separator}application.yml</file>
                             <token>dev</token>
                             <value>prod</value>
                             <regex>false</regex>
