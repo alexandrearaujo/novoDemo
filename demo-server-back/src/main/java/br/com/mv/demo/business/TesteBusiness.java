@@ -1,5 +1,6 @@
 package br.com.mv.demo.business;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,22 +9,32 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.CacheMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.mv.demo.model.DetalheTeste;
+import br.com.mv.demo.model.DetalheTeste_;
 import br.com.mv.demo.model.Teste;
+import br.com.mv.demo.model.TesteFilho2;
+import br.com.mv.demo.model.TesteWrapper;
+import br.com.mv.demo.model.Teste_;
 import br.com.mv.demo.model.type.EnumTipoTeste;
 import br.com.mv.demo.repository.TesteRepository;
 
@@ -74,18 +85,127 @@ public class TesteBusiness {
 
 	public Teste joinFetchCriteria(Long id) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Teste> query = builder.createQuery(Teste.class);
-		Root<Teste> root = query.from(Teste.class);
-		root.fetch("detalhes", JoinType.LEFT);
-		root.fetch("mappedTestes", JoinType.LEFT);
-		root.fetch("sortedTestes", JoinType.LEFT);
-		query.select(root).where(
+		CriteriaQuery<Teste> criteria = builder.createQuery(Teste.class);
+		Root<Teste> root = criteria.from(Teste.class);
+		Fetch<Teste, DetalheTeste> detalheTesteFetch = root.fetch(Teste_.detalhes, JoinType.LEFT);
+		root.fetch(Teste_.mappedTestes, JoinType.LEFT);
+		root.fetch(Teste_.sortedTestes, JoinType.LEFT);
+		ParameterExpression<Long> idParameter = builder.parameter(Long.class);
+		criteria.select(root).where(
 		    builder.and(
-		        builder.equal(root.get("id"), id)
+		        builder.equal(root.get(Teste_.id), idParameter)
 		    )
 		);
-		return entityManager.createQuery(query).getSingleResult();
 		
+		TypedQuery<Teste> query = entityManager.createQuery(criteria);
+		query.setParameter(idParameter, id);
+		return query.getSingleResult();
+	}
+	
+	public List<TesteWrapper> fetchWrapper() {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<TesteWrapper> criteria = builder.createQuery(TesteWrapper.class);
+		Root<Teste> root = criteria.from(Teste.class);
+
+		Path<Long> idPath = root.get(Teste_.id);
+		Path<String> descricaoPath = root.get(Teste_.descricao);
+
+		criteria.select(builder.construct(TesteWrapper.class, idPath, descricaoPath));
+		criteria.where(builder.equal(root.get(Teste_.descricao), "Teste"));
+
+		return entityManager.createQuery(criteria).getResultList();
+	}
+	
+	public List<TesteWrapper> fetchNamedNativeQueryDTO() {
+		List<TesteWrapper> testes = entityManager.createNamedQuery("teste.find_teste_dto").getResultList();
+		return testes;
+	}
+	
+	public List<TesteWrapper> fetchDTO() {
+		Session session = entityManager.unwrap(Session.class);
+		List<TesteWrapper> dtos = session.createSQLQuery(
+			    "SELECT t.id as \"id\", t.descricao as \"descricao\" FROM teste t")
+			.setResultTransformer(Transformers.aliasToBean(TesteWrapper.class))
+			.list();
+		return dtos;
+	}
+	
+	public List<TesteFilho2> fetchInheritance() {
+		Session session = entityManager.unwrap(Session.class);
+		List<TesteFilho2> testeFilhos = session.createSQLQuery(
+			    "SELECT * " +
+			    "FROM teste t " +
+			    "JOIN teste_filho_2 tf on t.id = tf.id")
+			.addEntity(TesteFilho2.class)
+			.list();
+		return testeFilhos;
+	}
+	
+	public List<TesteWrapper> fetchTuple() {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Tuple> criteria = builder.createTupleQuery();
+		Root<Teste> root = criteria.from(Teste.class);
+
+		Path<Long> idPath = root.get(Teste_.id);
+		Path<String> descricaoPath = root.get(Teste_.descricao);
+
+		criteria.multiselect(idPath, descricaoPath);
+		criteria.where(builder.equal(root.get(Teste_.descricao), "Teste"));
+
+		List<Tuple> tuples = entityManager.createQuery(criteria).getResultList();
+
+		List<TesteWrapper> listTesteWrapper = new ArrayList<TesteWrapper>();
+		for (Tuple tuple : tuples) {
+			listTesteWrapper.add(new TesteWrapper(tuple.get(idPath), tuple.get(descricaoPath)));
+		}
+		return listTesteWrapper;
+	}
+	
+	public List<TesteWrapper> fetchMultipleRoots() {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		
+		CriteriaQuery<Tuple> criteria = builder.createTupleQuery();
+		Root<Teste> testeRoot = criteria.from(Teste.class);
+		Root<DetalheTeste> detalheTesteRoot = criteria.from(DetalheTeste.class);
+		
+		Path<Long> idPath = testeRoot.get(Teste_.id);
+		Path<String> descricaoPath = testeRoot.get(Teste_.descricao);
+		
+		criteria.multiselect(testeRoot, detalheTesteRoot);
+		
+		Predicate testeRestriction = builder.and(
+		    builder.equal(idPath, 1),
+		    builder.isNotNull(descricaoPath)
+		);
+		
+		Predicate detalheTesteRestriction = builder.and(
+		    builder.like(detalheTesteRoot.get(DetalheTeste_.descricao ), "%TESTE%"),
+		    builder.equal(detalheTesteRoot.get(DetalheTeste_.id), 1)
+		);
+		
+		criteria.where(builder.and(testeRestriction, detalheTesteRestriction));
+		
+		List<Tuple> tuples = entityManager.createQuery(criteria).getResultList();
+		
+		List<TesteWrapper> listTesteWrapper = new ArrayList<TesteWrapper>();
+		for (Tuple tuple : tuples) {
+			listTesteWrapper.add(new TesteWrapper(tuple.get(idPath), tuple.get(descricaoPath)));
+		}
+		return listTesteWrapper;
+	}
+	
+	public List<Object> fetchMultipleNativeEntities() {
+		Session session = entityManager.unwrap(Session.class);
+		List<Object> entities = session.createSQLQuery(
+			    "SELECT {t.*}, {dt.*} " +
+			    "FROM teste t, detalhe_teste dt " +
+			    "WHERE t.id = dt.cd_teste" )
+			.addEntity( "t", Teste.class)
+			.addEntity( "dt", DetalheTeste.class)
+			.list();
+		return entities;
 	}
 	
 	public Teste fetchEntityGraph(Long id) {
@@ -126,6 +246,20 @@ public class TesteBusiness {
 	
 	public List<String> loadCoalesce(Long id) {
 		TypedQuery<String> query = entityManager.createQuery("select coalesce(t.descricao, '<sem descricao>' ) from Teste t where t.id = :id", String.class);
+		query.setParameter("id", id);
+		return query.getResultList();
+	}
+	
+	public List<String> loadCase(Long id) {
+		TypedQuery<String> query = entityManager.createQuery(
+				"select " +
+			    "    case " +
+			    "    when t.nomeCompleto is null " +
+			    "    then " +
+			    "     '<nome incompleto>' " +
+			    "    else p.nomeCompleto " +
+			    "    end " +
+			    "from Teste t where t.id = :id", String.class);
 		query.setParameter("id", id);
 		return query.getResultList();
 	}

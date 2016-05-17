@@ -14,6 +14,8 @@ import java.util.TreeSet;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -29,8 +31,10 @@ import javax.persistence.MapKey;
 import javax.persistence.MapKeyEnumerated;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnTransformer;
@@ -61,6 +65,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "TESTE")
+
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @EqualsAndHashCode(of = "id")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NamedEntityGraph(name = "teste.detalhes",
@@ -90,6 +95,25 @@ import lombok.Setter;
 		    mode = FetchMode.JOIN
 	    )
 	}
+)
+@NamedNativeQuery(
+    name = "find_teste_dto",
+    query =
+        "SELECT " +
+        "   id, " +
+        "   descricao " +
+        "FROM teste ",
+    resultSetMapping = "id_descricao_dto"
+)
+@SqlResultSetMapping(
+    name = "id_descricao_dto",
+    classes = @ConstructorResult(
+        targetClass = TesteWrapper.class,
+        columns = {
+            @ColumnResult(name = "id"),
+            @ColumnResult(name = "descricao")
+        }
+    )
 )
 @Inheritance(strategy = InheritanceType.JOINED)
 @Polymorphism(type = PolymorphismType.EXPLICIT)

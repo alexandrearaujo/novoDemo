@@ -13,12 +13,29 @@
 		<relativePath>../</relativePath>
 	</parent>
 	
+	<dependencies>
+	   <dependency>
+		   <groupId>org.hibernate</groupId>
+		   <artifactId>hibernate-jpamodelgen</artifactId>
+<!-- 	       <version>CURRENT-VERSION</version> -->
+	   </dependency>
+	</dependencies>
+	
 	<build>
        <plugins>
            <plugin>
                <groupId>org.hibernate.orm.tooling</groupId>
                <artifactId>hibernate-enhance-maven-plugin</artifactId>
            </plugin>
+           
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArguments>
+						<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+					</compilerArguments>
+				</configuration>
+			</plugin>
        </plugins>
     </build>
 </project>
